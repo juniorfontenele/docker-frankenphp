@@ -11,8 +11,10 @@ ENV LOG_LEVEL=${LOG_LEVEL:-debug}
 ARG LOG_LEVEL=${LOG_LEVEL}
 
 # Install dependencies
-RUN set -xe && \
-    apt-get update && apt-get install -y \
+RUN set -xe \
+    && apt-get update \
+    && apt-get upgrade -y \
+    && apt-get install -y \
     apt-transport-https \
     libnss3-tools \
     gnupg2 \

@@ -12,6 +12,7 @@ else
   if [ -d "$DIR" ]; then
     echo "🎬 executing pre-scripts under $DIR"
     /bin/run-parts --verbose "$DIR"
+    echo "✅ finished executing pre-scripts under $DIR"
   fi
 
   echo "🎬 start supervisord"

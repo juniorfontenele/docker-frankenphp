@@ -1,8 +1,6 @@
 {
 	{$CADDY_GLOBAL_OPTIONS}
 
-    
-
 	frankenphp {
 		#worker /path/to/your/worker.php
 		{$FRANKENPHP_CONFIG}
@@ -18,42 +16,18 @@
 {$CADDY_EXTRA_CONFIG}
 
 {$SERVER_NAME:localhost} {
-	#log {
-	#	# Redact the authorization query parameter that can be set by Mercure
-	#	format filter {
-	#		wrap console
-	#		fields {
-	#			uri query {
-	#				replace authorization REDACTED
-	#			}
-	#		}
-	#	}
-	#}
-
     log default {
-        output stdout
-        format console
+        output file /var/log/caddy/access.log {
+            roll true
+            roll_size 50MiB
+            roll_keep 5
+            roll_keep_for 3d
+        }
+        format json
     }
 
 	root * public/
 	encode zstd br gzip
-
-	# Uncomment the following lines to enable Mercure and Vulcain modules
-	#mercure {
-	#	# Transport to use (default to Bolt)
-	#	transport_url {$MERCURE_TRANSPORT_URL:bolt:///data/mercure.db}
-	#	# Publisher JWT key
-	#	publisher_jwt {env.MERCURE_PUBLISHER_JWT_KEY} {env.MERCURE_PUBLISHER_JWT_ALG}
-	#	# Subscriber JWT key
-	#	subscriber_jwt {env.MERCURE_SUBSCRIBER_JWT_KEY} {env.MERCURE_SUBSCRIBER_JWT_ALG}
-	#	# Allow anonymous subscribers (double-check that it's what you want)
-	#	anonymous
-	#	# Enable the subscription API (double-check that it's what you want)
-	#	subscriptions
-	#	# Extra directives
-	#	{$MERCURE_EXTRA_DIRECTIVES}
-	#}
-	#vulcain
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
 

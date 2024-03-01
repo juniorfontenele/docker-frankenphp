@@ -94,5 +94,6 @@ RUN apt-get autoremove -y \
 
 ENV LARAVEL_PATH=/app
 RUN chown -R sail:www-data /app
+RUN chown -R sail:www-data /config
 
 CMD ["/entrypoint.sh"]

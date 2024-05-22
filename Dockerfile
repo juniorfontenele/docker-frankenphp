@@ -44,6 +44,7 @@ RUN set -xe \
     procps \
     htop \
     gosu \
+    npm \
     libicu-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 

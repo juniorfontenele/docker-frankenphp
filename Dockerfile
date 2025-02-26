@@ -1,7 +1,7 @@
-FROM dunglas/frankenphp:latest-php8.3-bookworm
+FROM dunglas/frankenphp:php8.4-bookworm
 
 LABEL maintainer="Junior Fontenele <dockerfile+frankenphp@juniorfontenele.com.br>"
-LABEL version="1.0.0"
+LABEL version="2.0.0"
 LABEL description="Laravel App Server"
 
 ENV LOG_LEVEL=${LOG_LEVEL:-debug}

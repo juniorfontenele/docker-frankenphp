@@ -18,6 +18,7 @@ ENV WWWGROUP_ID=${WWWGROUP_ID:-1337}
 RUN set -xe \
     && apt-get update \
     && apt-get upgrade -y \
+    && curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get install -y \
     apt-transport-https \
     libnss3-tools \
@@ -44,7 +45,7 @@ RUN set -xe \
     procps \
     htop \
     gosu \
-    npm \
+    nodejs \
     libicu-dev \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -87,6 +88,7 @@ COPY ./php.ini-production "$PHP_INI_DIR/php.ini"
 RUN apt-get autoremove -y \
     build-essential \
     gnupg2 \
+    && rm -rf /etc/apt/sources.list.d/nodesource.list \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/pear

@@ -16,9 +16,9 @@ ENV WWWGROUP_ID=${WWWGROUP_ID:-1337}
 
 # Install dependencies
 RUN set -xe \
+    curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get update \
     && apt-get upgrade -y \
-    && curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get install -y \
     apt-transport-https \
     libnss3-tools \

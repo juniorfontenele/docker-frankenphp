@@ -15,8 +15,8 @@ ENV WWWUSER_ID=${WWWUSER_ID:-1337}
 ENV WWWGROUP_ID=${WWWGROUP_ID:-1337}
 
 # Install dependencies
+RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash -
 RUN set -xe \
-    curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \

@@ -13,25 +13,25 @@
 	order php before file_server
 }
 
-{$CADDY_EXTRA_CONFIG}
+{$CADDY_EXTRA_CONFIG} 
 
 {$SERVER_NAME:localhost} {
-    log default {
-        output stdout
-        format console
-    }
+	log default {
+		output stdout
+		format console
+	}
 
 	root * public/
-	encode zstd br gzip
+	encode zstd br gzip 
 
 	{$CADDY_SERVER_EXTRA_DIRECTIVES}
 
-    header /* {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        X-XSS-Protection "1; mode=block"
-        -Server
-    }
+	header /* {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		X-XSS-Protection "1; mode=block"
+		-Server
+	}
 
 	php_server
 }

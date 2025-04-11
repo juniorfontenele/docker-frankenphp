@@ -32,15 +32,17 @@ LABEL maintainer="Junior Fontenele <dockerfile+frankenphp@juniorfontenele.com.br
 LABEL version="2.0.0"
 LABEL description="Laravel App Server"
 
-ENV LOG_LEVEL=${LOG_LEVEL:-debug}
-ARG LOG_LEVEL=${LOG_LEVEL}
-
+ENV APP_PORT=80
+ENV APP_NAME=Laravel
+ENV APP_ENV=local
+ENV APP_DEBUG=true
 ENV LARAVEL_PATH=/app
-ENV SERVER_NAME=${SERVER_NAME:-:80}
-ENV WWWUSER=${WWWUSER:-sail}
-ENV WWWGROUP=${WWWGROUP:-sail}
-ENV WWWUSER_ID=${WWWUSER_ID:-1337}
-ENV WWWGROUP_ID=${WWWGROUP_ID:-1337}
+ENV SERVER_NAME=:${APP_PORT}
+ENV WWWUSER=sail
+ENV WWWGROUP=sail
+ENV WWWUSER_ID=1337
+ENV WWWGROUP_ID=1337
+ENV LOG_LEVEL=debug
 
 # Install dependencies
 RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash -
@@ -96,12 +98,12 @@ RUN mkdir -p /etc/supervisor/conf.d /var/log/supervisor /var/log/caddy /etc/cron
 COPY --from=builder /usr/local/bin/frankenphp /usr/local/bin/frankenphp
 
 # Create user sail
-RUN groupadd -g 1337 sail \
-    && useradd -ms /bin/bash --no-user-group -g 1337 -u 1337 sail \
+RUN groupadd -g ${WWWGROUP_ID} ${WWWGROUP} \
+    && useradd -ms /bin/bash --no-user-group -g ${WWWGROUP_ID} -u ${WWWUSER_ID} ${WWWUSER} \
     && setcap CAP_NET_BIND_SERVICE=+eip /usr/local/bin/frankenphp \
-    && chown -R sail:sail /data/caddy \
-    && chown -R sail:sail /config/caddy \
-    && chown -R sail:sail /var/log/caddy
+    && chown -R ${WWWUSER}:${WWWGROUP} /data/caddy \
+    && chown -R ${WWWUSER}:${WWWGROUP} /config/caddy \
+    && chown -R ${WWWUSER}:${WWWGROUP} /var/log/caddy
 
 # Replace Caddyfile
 COPY ./Caddyfile /etc/caddy/Caddyfile
@@ -124,7 +126,9 @@ RUN apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/* \
     && rm -rf /tmp/pear
 
-RUN chown -R sail:sail /app
-RUN chown -R sail:sail /config
+RUN chown -R ${WWWUSER}:${WWWGROUP} /app
+RUN chown -R ${WWWUSER}:${WWWGROUP} /config
 
-CMD ["/entrypoint.sh"]
+EXPOSE ${APP_PORT}
+
+ENTRYPOINT ["/entrypoint.sh"]

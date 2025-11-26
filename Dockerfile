@@ -4,8 +4,12 @@ FROM dunglas/frankenphp:builder-php8.4 AS builder
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
 # CGO must be enabled to build FrankenPHP
-ENV CGO_ENABLED=1 XCADDY_SETCAP=1 XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'"
-RUN xcaddy build \
+RUN CGO_ENABLED=1 \
+    XCADDY_SETCAP=1 \
+    XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'" \
+    CGO_CFLAGS="$(php-config --includes)" \
+    CGO_LDFLAGS="$(php-config --ldflags) $(php-config --libs)" \
+    xcaddy build \
     --output /usr/local/bin/frankenphp \
     --with github.com/dunglas/frankenphp=./ \
     --with github.com/dunglas/frankenphp/caddy=./caddy/ \
@@ -80,13 +84,18 @@ RUN set -xe \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP extensions
-RUN docker-php-ext-configure gd --with-webp \
-    && docker-php-ext-install \
-    pdo_mysql mbstring zip exif \
-    pcntl gd sockets intl \
-    && pecl install -o -f redis \
-    && rm -rf /tmp/pear \
-    && docker-php-ext-enable redis
+RUN install-php-extensions \
+    pdo_mysql \
+    mbstring \
+    intl \
+    zip \
+    sockets \
+    pcntl \
+    exif \
+    redis \
+    gd \
+    && docker-php-ext-configure gd --with-webp \
+    && docker-php-ext-install -j$(nproc) gd
 
 # Install composer    
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

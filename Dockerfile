@@ -40,7 +40,7 @@ RUN CGO_ENABLED=1 \
 # =========================
 
 ARG PHP_VERSION=8.4
-FROM dunglas/frankenphp:php${PHP_VERSION}-bookworm
+FROM dunglas/frankenphp:php${PHP_VERSION}-trixie
 
 ARG PHP_VERSION
 

@@ -1,4 +1,9 @@
-FROM dunglas/frankenphp:builder-php8.4 AS builder
+ARG PHP_VERSION=8.4
+
+# =========================
+#  Stage 1: Builder
+# =========================
+FROM dunglas/frankenphp:builder-php${PHP_VERSION} AS builder
 
 # Copy xcaddy in the builder image
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
@@ -30,11 +35,18 @@ RUN CGO_ENABLED=1 \
     --with github.com/fvbommel/caddy-dns-ip-range \
     --with github.com/xcaddyplugins/caddy-trusted-gcp-cloudcdn
 
-FROM dunglas/frankenphp:php8.4-bookworm
+# =========================
+#  Stage 2: Runtime
+# =========================
+
+ARG PHP_VERSION=8.4
+FROM dunglas/frankenphp:php${PHP_VERSION}-bookworm
+
+ARG PHP_VERSION
 
 LABEL maintainer="Junior Fontenele <dockerfile+frankenphp@juniorfontenele.com.br>"
-LABEL version="2.0.0"
-LABEL description="Laravel App Server"
+LABEL version="2.0.0-php${PHP_VERSION}"
+LABEL description="Laravel App Server (FrankenPHP ${PHP_VERSION})"
 
 ENV APP_PORT=80
 ENV APP_NAME=Laravel
@@ -49,8 +61,8 @@ ENV WWWGROUP_ID=1337
 ENV LOG_LEVEL=debug
 
 # Install dependencies
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash -
-RUN set -xe \
+RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
+    && set -xe \
     && apt-get update \
     && apt-get upgrade -y \
     && apt-get install -y \
@@ -95,7 +107,7 @@ RUN install-php-extensions \
     redis \
     gd \
     && docker-php-ext-configure gd --with-webp \
-    && docker-php-ext-install -j$(nproc) gd
+    && docker-php-ext-install -j"$(nproc)" gd
 
 # Install composer    
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

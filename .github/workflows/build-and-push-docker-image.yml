@@ -33,8 +33,6 @@ jobs:
             - name: Build and push
               uses: docker/build-push-action@v6
               with:
-                  context: .
-                  file: ./Dockerfile
                   push: true
                   build-args: |
                       PHP_VERSION=${{ matrix.php_version }}

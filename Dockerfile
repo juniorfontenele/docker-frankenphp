@@ -61,7 +61,7 @@ ENV WWWGROUP_ID=1337
 ENV LOG_LEVEL=debug
 
 # Install dependencies
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
     && set -xe \
     && apt-get update \
     && apt-get upgrade -y \

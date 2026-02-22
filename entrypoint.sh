@@ -3,7 +3,7 @@
 cd /app
 
 if [ "$WWWUSER" != "root" ] && [ "$WWWUSER" != "sail" ]; then
-    echo "You should set SUPERVISOR_PHP_USER to either 'sail' or 'root'."
+    echo "You should set WWWUSER env to either 'sail' or 'root'."
     exit 1
 fi
 

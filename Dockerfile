@@ -9,7 +9,11 @@ FROM dunglas/frankenphp:builder-php${PHP_VERSION} AS builder
 COPY --from=caddy:builder /usr/bin/xcaddy /usr/bin/xcaddy
 
 # CGO must be enabled to build FrankenPHP
+# GOTOOLCHAIN=auto: the builder image pins GOTOOLCHAIN=local, so the build dies
+# as soon as a module requires a newer Go than the image ships. With auto, Go
+# fetches the exact toolchain the go.mod asks for (checksum-verified).
 RUN CGO_ENABLED=1 \
+    GOTOOLCHAIN=auto \
     XCADDY_SETCAP=1 \
     XCADDY_GO_BUILD_FLAGS="-ldflags '-w -s'" \
     CGO_CFLAGS="$(php-config --includes)" \
